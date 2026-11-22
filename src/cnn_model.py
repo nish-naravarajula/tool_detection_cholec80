@@ -24,40 +24,40 @@ if __name__ == "__main__":
 
     print("First image probabilities:", probabilities[0].tolist())
 
-# Dummy labels for our two images
-labels = torch.tensor([
-    [1, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 1, 0, 0]
-], dtype=torch.float32)
+    # Dummy labels for our two images
+    labels = torch.tensor([
+        [1, 0, 1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 1, 0, 0]
+    ], dtype=torch.float32)
 
-criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.BCEWithLogitsLoss()
 
-loss = criterion(outputs, labels)
+    loss = criterion(outputs, labels)
 
-print("Loss:", loss.item())
+    print("Loss:", loss.item())
 
-# Create an optimizer for the final classification layer
-optimizer = torch.optim.SGD(model.fc.parameters(), lr=0.01)
+    # Create an optimizer for the final classification layer
+    optimizer = torch.optim.SGD(model.fc.parameters(), lr=0.01)
 
-# Save the current weights to check whether they change
-weights_before = model.fc.weight.detach().clone()
+    # Save the current weights to check whether they change
+    weights_before = model.fc.weight.detach().clone()
 
-# Perform one training update
-optimizer.zero_grad()
-loss.backward()
-optimizer.step()
+    # Perform one training update
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
 
-# Verify that the weights changed
-weight_change = (
-    model.fc.weight.detach() - weights_before
-).abs().sum().item()
+    # Verify that the weights changed
+    weight_change = (
+        model.fc.weight.detach() - weights_before
+    ).abs().sum().item()
 
-print("Weight change:", weight_change)
+    print("Weight change:", weight_change)
 
-# Calculate loss after updating the weights
-with torch.no_grad():
-    new_outputs = model(images)
-    new_loss = criterion(new_outputs, labels)
+    # Calculate loss after updating the weights
+    with torch.no_grad():
+        new_outputs = model(images)
+        new_loss = criterion(new_outputs, labels)
 
-print("Loss before update:", loss.item())
-print("Loss after update:", new_loss.item())
+    print("Loss before update:", loss.item())
+    print("Loss after update:", new_loss.item())
